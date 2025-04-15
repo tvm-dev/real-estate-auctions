@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Imóveis da Caixa</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      min-width: 150px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #eee;
+    }
+
+    @media (max-width: 768px) {
+      .filters {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Imóveis da Caixa - Filtros</h1>
+  <input type="file" id="csvFile" accept=".csv">
+  
+  <div class="filters">
+    <select id="ufFilter"><option value="">UF</option></select>
+    <select id="cidadeFilter"><option value="">Cidade</option></select>
+    <select id="bairroFilter"><option value="">Bairro</option></select>
+    <select id="modalidadeFilter"><option value="">Modalidade</option></select>
+  </div>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>UF</th>
+        <th>Cidade</th>
+        <th>Bairro</th>
+        <th>Endereço</th>
+        <th>Preço</th>
+        <th>Valor Avaliação</th>
+        <th>Desconto</th>
+        <th>Modalidade</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let originalData = [];
+
+    document.getElementById('csvFile').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const lines = event.target.result.split('\n').slice(4); // pula cabeçalhos falsos
+        const data = lines
+          .map(line => line.trim().split(';'))
+          .filter(cols => cols.length >= 11);
+
+        originalData = data.map(cols => ({
+          uf: cols[1],
+          cidade: cols[2],
+          bairro: cols[3],
+          endereco: cols[4],
+          preco: cols[5],
+          avaliacao: cols[6],
+          desconto: cols[7],
+          modalidade: cols[9],
+          link: cols[10]
+        }));
+
+        localStorage.setItem("imoveis", JSON.stringify(originalData));
+        preencherFiltros(originalData);
+        renderTable(originalData);
+      };
+
+      reader.readAsText(file, 'ISO-8859-1');
+    });
+
+    function preencherFiltros(data) {
+      const ufs = new Set();
+      const cidades = new Set();
+      const bairros = new Set();
+      const modalidades = new Set();
+
+      data.forEach(item => {
+        ufs.add(item.uf);
+        cidades.add(item.cidade);
+        bairros.add(item.bairro);
+        modalidades.add(item.modalidade);
+      });
+
+      preencherSelect("ufFilter", ufs);
+      preencherSelect("cidadeFilter", cidades);
+      preencherSelect("bairroFilter", bairros);
+      preencherSelect("modalidadeFilter", modalidades);
+    }
+
+    function preencherSelect(id, values) {
+      const select = document.getElementById(id);
+      values = Array.from(values).sort();
+      values.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function renderTable(data) {
+      const tbody = document.querySelector("#dataTable tbody");
+      tbody.innerHTML = "";
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.uf}</td>
+          <td>${item.cidade}</td>
+          <td>${item.bairro}</td>
+          <td>${item.endereco}</td>
+          <td>${item.preco}</td>
+          <td>${item.avaliacao}</td>
+          <td>${item.desconto}</td>
+          <td>${item.modalidade}</td>
+          <td><a href="${item.link}" target="_blank">Acessar</a></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    const filtros = ["ufFilter", "cidadeFilter", "bairroFilter", "modalidadeFilter"];
+    filtros.forEach(filtroId => {
+      document.getElementById(filtroId).addEventListener("change", () => {
+        const filtrosAtuais = {
+          uf: document.getElementById("ufFilter").value,
+          cidade: document.getElementById("cidadeFilter").value,
+          bairro: document.getElementById("bairroFilter").value,
+          modalidade: document.getElementById("modalidadeFilter").value
+        };
+
+        const filtrado = originalData.filter(item => {
+          return (!filtrosAtuais.uf || item.uf === filtrosAtuais.uf) &&
+                 (!filtrosAtuais.cidade || item.cidade === filtrosAtuais.cidade) &&
+                 (!filtrosAtuais.bairro || item.bairro === filtrosAtuais.bairro) &&
+                 (!filtrosAtuais.modalidade || item.modalidade === filtrosAtuais.modalidade);
+        });
+
+        renderTable(filtrado);
+      });
+    });
+  </script>
+</body>
+</html>
