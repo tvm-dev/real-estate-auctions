@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda de Leilões de Imóveis - iMobi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #003366;
+      --secondary-color: #ffcc00;
+      --accent-color: #00a0e1;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    /* Layout Moderno */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header Estilizado */
+    .navbar {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo i {
+      color: var(--secondary-color);
+    }
+
+    .menu-toggle {
+      display: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: white;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 0.5rem 0;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--secondary-color);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--secondary-color);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Conteúdo Principal */
+    .main-content {
+      flex: 1;
+      padding: 2rem 0;
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--primary-color);
+      font-size: 2.2rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background-color: var(--secondary-color);
+      border-radius: 2px;
+    }
+
+    /* Card de Informações */
+    .info-box {
+      background-color: white;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .info-box p {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-box i {
+      color: var(--accent-color);
+      font-size: 1.2rem;
+    }
+
+    #link-cef a {
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    #link-cef a:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+
+    /* Formulário de Adição */
+    .add-leilao-form {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0, 160, 225, 0.2);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #002244;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: var(--dark-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: #e6b800;
+    }
+
+    /* Seções de Leilões por Data */
+    .leilao-section {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--secondary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .today .section-title {
+      color: var(--success-color);
+    }
+
+    .tomorrow .section-title {
+      color: var(--warning-color);
+    }
+
+    /* Tabela Estilizada */
+    .table-container {
+      overflow-x: auto;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    td a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    td a:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-today {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .badge-tomorrow {
+      background-color: var(--warning-color);
+      color: var(--dark-color);
+    }
+
+    .badge-upcoming {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-icon.edit {
+      color: var(--accent-color);
+    }
+
+    .btn-icon.edit:hover {
+      background-color: rgba(0, 160, 225, 0.1);
+    }
+
+    .btn-icon.delete {
+      color: var(--danger-color);
+    }
+
+    .btn-icon.delete:hover {
+      background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--primary-color);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--dark-color);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* Rodapé Moderno */
+    footer {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 2rem 0;
+      margin-top: auto;
+    }
+
+    .footer-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-logo i {
+      color: var(--secondary-color);
+    }
+
+    .footer-about p {
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .footer-links h3, .footer-contact h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .footer-links h3::after, .footer-contact h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background-color: var(--secondary-color);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      color: var(--secondary-color);
+    }
+
+    .footer-contact p {
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.8;
+    }
+
+    .footer-contact i {
+      width: 20px;
+      color: var(--secondary-color);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--primary-color);
+        padding: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-links li {
+        padding: 0.5rem 1.5rem;
+      }
+
+      .nav-links a::after {
+        display: none;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .main-content, .nav-container, .footer-container {
+        width: 95%;
+      }
+
+      th, td {
+        padding: 0.75rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+    }
+
+    /* Animações */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .leilao-section {
+      animation: fadeIn 0.5s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Menu Responsivo -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="./index.html" class="logo">
+          <i class="fas fa-gavel"></i>
+          <span>iMobi</span>
+        </a>
+        <button class="menu-toggle" aria-label="Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+          <li><a href="#"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
+          <li><a href="#adicionar"><i class="fas fa-plus-circle"></i> Adicionar</a></li>
+          <li><a href="#contato"><i class="fas fa-envelope"></i> Contato</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <h1>Seus Leilões Agendados</h1>
+      
+    
+
+      
+
+      <!-- Seções de leilões organizadas por data -->
+      <div id="leiloes-hoje" class="leilao-section today">
+        <h2 class="section-title"><i class="fas fa-calendar-day"></i> Leilões Hoje</h2>
+        <div class="table-container">
+          <table id="tableHoje">
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Descrição</th>
+                <th>Local/Site</th>
+                <th>Link</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="leiloes-amanha" class="leilao-section tomorrow">
+        <h2 class="section-title"><i class="fas fa-calendar-check"></i> Leilões Amanhã</h2>
+        <div class="table-container">
+          <table id="tableAmanha">
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Descrição</th>
+                <th>Local/Site</th>
+                <th>Link</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="leiloes-futuros" class="leilao-section">
+        <h2 class="section-title"><i class="fas fa-calendar-week"></i> Próximos Leilões</h2>
+        <div class="table-container">
+          <table id="tableFuturos">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Descrição</th>
+                <th>Local/Site</th>
+                <th>Link</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Formulário para adicionar novo leilão -->
+      <div id="adicionar" class="add-leilao-form">
+        <h2 class="section-title"><i class="fas fa-plus-circle"></i> Adicionar Novo Leilão</h2>
+        <form id="leilaoForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="leilaoTitulo">Título/Descrição</label>
+              <input type="text" id="leilaoTitulo" placeholder="Ex: Leilão Caixa - Imóveis SP" required>
+            </div>
+            <div class="form-group">
+              <label for="leilaoData">Data</label>
+              <input type="date" id="leilaoData" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="leilaoHora">Horário</label>
+              <input type="time" id="leilaoHora" required>
+            </div>
+            <div class="form-group">
+              <label for="leilaoLocal">Local/Site</label>
+              <input type="text" id="leilaoLocal" placeholder="Ex: Site da Caixa, Online, etc." required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="leilaoLink">Link</label>
+              <input type="url" id="leilaoLink" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label for="leilaoStatus">Status</label>
+              <select id="leilaoStatus">
+                <option value="planejado">Planejado</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="cancelado">Cancelado</option>
+                <option value="realizado">Realizado</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="leilaoObservacoes">Observações</label>
+            <textarea id="leilaoObservacoes" rows="3" placeholder="Detalhes importantes sobre o leilão"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btnCancelar">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Salvar Leilão
+            </button>
+          </div>
+          <input type="hidden" id="leilaoId">
+        </form>
+      </div>
+
+      <div id="leiloes-passados" class="leilao-section">
+        <h2 class="section-title"><i class="fas fa-history"></i> Leilões Passados</h2>
+        <div class="table-container">
+          <table id="tablePassados">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal" id="confirmModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confirmar Exclusão</h2>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Tem certeza que deseja excluir este leilão? Esta ação não pode ser desfeita.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancelarExclusao">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-primary" id="btnConfirmarExclusao">
+            <i class="fas fa-trash"></i> Confirmar Exclusão
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer id="contato">
+      <div class="footer-container">
+        <div class="footer-about">
+          <div class="footer-logo">
+            <i class="fas fa-gavel"></i>
+            <span>iMobi Leilões</span>
+          </div>
+          <p>Sistema para organização e acompanhamento de leilões de imóveis.</p>
+          <p>Nunca perca um leilão importante com nossa agenda personalizada.</p>
+        </div>
+        <div class="footer-links">
+          <h3>Links Rápidos</h3>
+          <ul>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Agenda</a></li>
+            <li><a href="#adicionar"><i class="fas fa-chevron-right"></i> Adicionar Leilão</a></li>
+            <li><a href="#contato"><i class="fas fa-chevron-right"></i> Contato</a></li>
+            <li><a href="https://venda-imoveis.caixa.gov.br" target="_blank"><i class="fas fa-chevron-right"></i> Leilões Caixa</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h3>Contato</h3>
+          <p><i class="fas fa-envelope"></i> contato@imobileiloes.com</p>
+          <p><i class="fas fa-phone-alt"></i> (11) 99999-9999</p>
+          <p><i class="fas fa-user"></i> Atendimento</p>
+          <p><i class="fas fa-clock"></i> Seg-Sex: 9h às 18h</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 iMobi Leilões - Todos os direitos reservados</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Menu responsivo
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    });
+
+    // Funções para manipulação dos leilões
+    let leiloes = JSON.parse(localStorage.getItem('leiloes')) || [];
+    let leilaoParaExcluir = null;
+
+    // Formatar data para exibição
+    function formatarData(dataStr) {
+      const data = new Date(dataStr);
+      return data.toLocaleDateString('pt-BR');
+    }
+
+    // Formatar data e hora para exibição
+    function formatarDataHora(dataStr, horaStr) {
+      const data = new Date(dataStr + 'T' + horaStr);
+      return data.toLocaleString('pt-BR');
+    }
+
+    // Formatar apenas hora
+    function formatarHora(horaStr) {
+      return horaStr.substring(0, 5);
+    }
+
+    // Classificar leilões por data e hora
+    function classificarLeiloes() {
+      return leiloes.sort((a, b) => {
+        const dataA = new Date(a.data + 'T' + a.hora);
+        const dataB = new Date(b.data + 'T' + b.hora);
+        return dataA - dataB;
+      });
+    }
+
+    // Separar leilões por categoria (hoje, amanhã, futuros, passados)
+    function separarLeiloes() {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      
+      const amanha = new Date(hoje);
+      amanha.setDate(amanha.getDate() + 1);
+      
+      const leiloesHoje = [];
+      const leiloesAmanha = [];
+      const leiloesFuturos = [];
+      const leiloesPassados = [];
+      
+      classificarLeiloes().forEach(leilao => {
+        const dataLeilao = new Date(leilao.data);
+        dataLeilao.setHours(0, 0, 0, 0);
+        
+        if (dataLeilao.getTime() === hoje.getTime()) {
+          leiloesHoje.push(leilao);
+        } else if (dataLeilao.getTime() === amanha.getTime()) {
+          leiloesAmanha.push(leilao);
+        } else if (dataLeilao > hoje) {
+          leiloesFuturos.push(leilao);
+        } else {
+          leiloesPassados.push(leilao);
+        }
+      });
+      
+      return { leiloesHoje, leiloesAmanha, leiloesFuturos, leiloesPassados };
+    }
+
+    // Renderizar tabelas
+    function renderizarTabelas() {
+      const { leiloesHoje, leiloesAmanha, leiloesFuturos, leiloesPassados } = separarLeiloes();
+      
+      // Renderizar leilões de hoje
+      const tbodyHoje = document.querySelector('#tableHoje tbody');
+      tbodyHoje.innerHTML = '';
+      
+      if (leiloesHoje.length === 0) {
+        tbodyHoje.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum leilão agendado para hoje</td></tr>';
+      } else {
+        leiloesHoje.forEach(leilao => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${formatarHora(leilao.hora)}</td>
+            <td>${leilao.titulo}</td>
+            <td>${leilao.local}</td>
+            <td>${leilao.link ? `<a href="${leilao.link}" target="_blank"><i class="fas fa-external-link-alt"></i> Acessar</a>` : '-'}</td>
+            <td><span class="badge badge-today">${formatarStatus(leilao.status)}</span></td>
+            <td class="action-buttons">
+              <button class="btn-icon edit" data-id="${leilao.id}"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon delete" data-id="${leilao.id}"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+          tbodyHoje.appendChild(tr);
+        });
+      }
+      
+      // Renderizar leilões de amanhã
+      const tbodyAmanha = document.querySelector('#tableAmanha tbody');
+      tbodyAmanha.innerHTML = '';
+      
+      if (leiloesAmanha.length === 0) {
+        tbodyAmanha.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum leilão agendado para amanhã</td></tr>';
+      } else {
+        leiloesAmanha.forEach(leilao => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${formatarHora(leilao.hora)}</td>
+            <td>${leilao.titulo}</td>
+            <td>${leilao.local}</td>
+            <td>${leilao.link ? `<a href="${leilao.link}" target="_blank"><i class="fas fa-external-link-alt"></i> Acessar</a>` : '-'}</td>
+            <td><span class="badge badge-tomorrow">${formatarStatus(leilao.status)}</span></td>
+            <td class="action-buttons">
+              <button class="btn-icon edit" data-id="${leilao.id}"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon delete" data-id="${leilao.id}"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+          tbodyAmanha.appendChild(tr);
+        });
+      }
+      
+      // Renderizar leilões futuros
+      const tbodyFuturos = document.querySelector('#tableFuturos tbody');
+      tbodyFuturos.innerHTML = '';
+      
+      if (leiloesFuturos.length === 0) {
+        tbodyFuturos.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum leilão futuro agendado</td></tr>';
+      } else {
+        leiloesFuturos.forEach(leilao => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${formatarData(leilao.data)}</td>
+            <td>${formatarHora(leilao.hora)}</td>
+            <td>${leilao.titulo}</td>
+            <td>${leilao.local}</td>
+            <td>${leilao.link ? `<a href="${leilao.link}" target="_blank"><i class="fas fa-external-link-alt"></i> Acessar</a>` : '-'}</td>
+            <td><span class="badge badge-upcoming">${formatarStatus(leilao.status)}</span></td>
+            <td class="action-buttons">
+              <button class="btn-icon edit" data-id="${leilao.id}"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon delete" data-id="${leilao.id}"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+          tbodyFuturos.appendChild(tr);
+        });
+      }
+      
+      // Renderizar leilões passados
+      const tbodyPassados = document.querySelector('#tablePassados tbody');
+      tbodyPassados.innerHTML = '';
+      
+      if (leiloesPassados.length === 0) {
+        tbodyPassados.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum leilão passado registrado</td></tr>';
+      } else {
+        leiloesPassados.forEach(leilao => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${formatarData(leilao.data)}</td>
+            <td>${leilao.titulo}</td>
+            <td><span class="badge">${formatarStatus(leilao.status)}</span></td>
+            <td class="action-buttons">
+              <button class="btn-icon edit" data-id="${leilao.id}"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon delete" data-id="${leilao.id}"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+          tbodyPassados.appendChild(tr);
+        });
+      }
+      
+      // Adicionar eventos aos botões de edição e exclusão
+      document.querySelectorAll('.btn-icon.edit').forEach(btn => {
+        btn.addEventListener('click', () => editarLeilao(btn.dataset.id));
+      });
+      
+      document.querySelectorAll('.btn-icon.delete').forEach(btn => {
+        btn.addEventListener('click', () => abrirModalExclusao(btn.dataset.id));
+      });
+    }
+
+    // Formatador de status
+    function formatarStatus(status) {
+      const statusMap = {
+        'planejado': 'Planejado',
+        'confirmado': 'Confirmado',
+        'cancelado': 'Cancelado',
+        'realizado': 'Realizado'
+      };
+      return statusMap[status] || status;
+    }
+
+    // Gerar ID único
+    function gerarId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // Limpar formulário
+    function limparFormulario() {
+      document.getElementById('leilaoForm').reset();
+      document.getElementById('leilaoId').value = '';
+    }
+
+    // Salvar leilão
+    function salvarLeilao(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('leilaoId').value || gerarId();
+      const titulo = document.getElementById('leilaoTitulo').value;
+      const data = document.getElementById('leilaoData').value;
+      const hora = document.getElementById('leilaoHora').value;
+      const local = document.getElementById('leilaoLocal').value;
+      const link = document.getElementById('leilaoLink').value;
+      const status = document.getElementById('leilaoStatus').value;
+      const observacoes = document.getElementById('leilaoObservacoes').value;
+      
+      const leilao = {
+        id,
+        titulo,
+        data,
+        hora,
+        local,
+        link,
+        status,
+        observacoes
+      };
+      
+      // Se já existe, remover o antigo
+      if (document.getElementById('leilaoId').value) {
+        leiloes = leiloes.filter(l => l.id !== id);
+      }
+      
+      // Adicionar o novo/atualizado
+      leiloes.push(leilao);
+      
+      // Salvar no localStorage
+      localStorage.setItem('leiloes', JSON.stringify(leiloes));
+      
+      // Atualizar a exibição
+      renderizarTabelas();
+      
+      // Limpar formulário
+      limparFormulario();
+      
+      // Scroll para a seção de hoje
+      document.getElementById('leiloes-hoje').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Editar leilão
+    function editarLeilao(id) {
+      const leilao = leiloes.find(l => l.id === id);
+      if (!leilao) return;
+      
+      document.getElementById('leilaoId').value = leilao.id;
+      document.getElementById('leilaoTitulo').value = leilao.titulo;
+      document.getElementById('leilaoData').value = leilao.data;
+      document.getElementById('leilaoHora').value = leilao.hora;
+      document.getElementById('leilaoLocal').value = leilao.local;
+      document.getElementById('leilaoLink').value = leilao.link;
+      document.getElementById('leilaoStatus').value = leilao.status;
+      document.getElementById('leilaoObservacoes').value = leilao.observacoes || '';
+      
+      // Scroll para o formulário
+      document.getElementById('adicionar').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Abrir modal de exclusão
+    function abrirModalExclusao(id) {
+      leilaoParaExcluir = id;
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    // Fechar modal
+    function fecharModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+      leilaoParaExcluir = null;
+    }
+
+    // Excluir leilão
+    function excluirLeilao() {
+      if (!leilaoParaExcluir) return;
+      
+      leiloes = leiloes.filter(l => l.id !== leilaoParaExcluir);
+      localStorage.setItem('leiloes', JSON.stringify(leiloes));
+      renderizarTabelas();
+      fecharModal();
+    }
+
+    // Event Listeners
+    document.getElementById('leilaoForm').addEventListener('submit', salvarLeilao);
+    document.getElementById('btnCancelar').addEventListener('click', limparFormulario);
+    document.querySelector('.modal-close').addEventListener('click', fecharModal);
+    document.getElementById('btnCancelarExclusao').addEventListener('click', fecharModal);
+    document.getElementById('btnConfirmarExclusao').addEventListener('click', excluirLeilao);
+
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+      // Definir data mínima como hoje
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('leilaoData').min = hoje;
+      
+      // Renderizar tabelas
+      renderizarTabelas();
+    });
+  </script>
+</body>
+</html>
