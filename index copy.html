@@ -140,15 +140,6 @@
     th {
       background-color: #003366;
       color: white;
-      cursor: pointer;
-    }
-
-    th:hover {
-      background-color: #002244;
-    }
-
-    .sort-icon {
-      margin-left: 5px;
     }
 
     tr:nth-child(even) {
@@ -229,32 +220,23 @@
     <input type="file" id="csvFile" accept=".csv">
     
     <div class="filters">
-      <select id="tipoFilter"><option value="">Tipo</option></select>
       <select id="ufFilter"><option value="">UF</option></select>
       <select id="cidadeFilter"><option value="">Cidade</option></select>
       <select id="bairroFilter"><option value="">Bairro</option></select>
       <select id="modalidadeFilter"><option value="">Modalidade</option></select>
-      <select id="sortFilter">
-        <option value="">Ordenar por</option>
-        <option value="preco-asc">Preço (menor para maior)</option>
-        <option value="preco-desc">Preço (maior para menor)</option>
-        <option value="desconto-asc">Desconto (menor para maior)</option>
-        <option value="desconto-desc">Desconto (maior para menor)</option>
-      </select>
     </div>
 
     <table id="dataTable">
       <thead>
         <tr>
-          <th data-sort="uf">UF</th>
-          <th data-sort="cidade">Cidade</th>
-          <th data-sort="bairro">Bairro</th>
+          <th>UF</th>
+          <th>Cidade</th>
+          <th>Bairro</th>
           <th>Endereço</th>
-          <th data-sort="preco">Preço</th>
-          <th data-sort="avaliacao">Valor Avaliação</th>
-          <th data-sort="desconto">Desconto</th>
-          <th data-sort="tipo">Tipo</th>
-          <th data-sort="modalidade">Modalidade</th>
+          <th>Preço</th>
+          <th>Valor Avaliação</th>
+          <th>Desconto</th>
+          <th>Modalidade</th>
           <th>Link</th>
         </tr>
       </thead>
@@ -277,7 +259,6 @@
 
     // Código original para manipulação do CSV
     let originalData = [];
-    let currentSort = { column: null, direction: 'asc' };
 
     document.getElementById('csvFile').addEventListener('change', function (e) {
       const file = e.target.files[0];
@@ -289,28 +270,17 @@
           .map(line => line.trim().split(';'))
           .filter(cols => cols.length >= 11);
 
-        originalData = data.map(cols => {
-          // Extrair tipo do imóvel (apartamento, casa, etc.) do endereço
-          const endereco = cols[4] || '';
-          let tipo = 'Outros';
-          if (endereco.toLowerCase().includes('apartamento') || endereco.toLowerCase().includes('apto')) tipo = 'Apartamento';
-          else if (endereco.toLowerCase().includes('casa')) tipo = 'Casa';
-          else if (endereco.toLowerCase().includes('terreno')) tipo = 'Terreno';
-          else if (endereco.toLowerCase().includes('comercial') || endereco.toLowerCase().includes('sala')) tipo = 'Comercial';
-          
-          return {
-            uf: cols[1] || '',
-            cidade: cols[2] || '',
-            bairro: cols[3] || '',
-            endereco: endereco,
-            preco: parseFloat((cols[5] || '0').replace('.', '').replace(',', '.')),
-            avaliacao: parseFloat((cols[6] || '0').replace('.', '').replace(',', '.')),
-            desconto: parseFloat((cols[7] || '0').replace(',', '.')),
-            tipo: tipo,
-            modalidade: cols[9] || '',
-            link: cols[10] || ''
-          };
-        });
+        originalData = data.map(cols => ({
+          uf: cols[1],
+          cidade: cols[2],
+          bairro: cols[3],
+          endereco: cols[4],
+          preco: cols[5],
+          avaliacao: cols[6],
+          desconto: cols[7],
+          modalidade: cols[9],
+          link: cols[10]
+        }));
 
         localStorage.setItem("imoveis", JSON.stringify(originalData));
         preencherFiltros(originalData);
@@ -325,21 +295,18 @@
       const cidades = new Set();
       const bairros = new Set();
       const modalidades = new Set();
-      const tipos = new Set();
 
       data.forEach(item => {
         ufs.add(item.uf);
         cidades.add(item.cidade);
         bairros.add(item.bairro);
         modalidades.add(item.modalidade);
-        tipos.add(item.tipo);
       });
 
       preencherSelect("ufFilter", ufs);
       preencherSelect("cidadeFilter", cidades);
       preencherSelect("bairroFilter", bairros);
       preencherSelect("modalidadeFilter", modalidades);
-      preencherSelect("tipoFilter", tipos);
     }
 
     function preencherSelect(id, values) {
@@ -347,37 +314,16 @@
       select.innerHTML = '<option value="">' + select.firstChild.textContent + '</option>';
       values = Array.from(values).sort();
       values.forEach(value => {
-        if (value) {
-          const option = document.createElement("option");
-          option.value = value;
-          option.textContent = value;
-          select.appendChild(option);
-        }
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
       });
     }
 
     function renderTable(data) {
       const tbody = document.querySelector("#dataTable tbody");
       tbody.innerHTML = "";
-      
-      // Ordenar dados se necessário
-      if (currentSort.column) {
-        data = [...data].sort((a, b) => {
-          let valA = a[currentSort.column];
-          let valB = b[currentSort.column];
-          
-          // Converter para número se for preço, avaliação ou desconto
-          if (['preco', 'avaliacao', 'desconto'].includes(currentSort.column)) {
-            valA = parseFloat(valA);
-            valB = parseFloat(valB);
-          }
-          
-          if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
-          if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
-          return 0;
-        });
-      }
-      
       data.forEach(item => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -387,99 +333,42 @@
           <td>${item.endereco}</td>
           <td>${formatarMoeda(item.preco)}</td>
           <td>${formatarMoeda(item.avaliacao)}</td>
-          <td>${item.desconto ? item.desconto.toFixed(2).replace('.', ',') + '%' : ''}</td>
-          <td>${item.tipo}</td>
+          <td>${item.desconto}</td>
           <td>${item.modalidade}</td>
           <td><a href="${item.link}" target="_blank">Acessar</a></td>
         `;
         tbody.appendChild(row);
       });
-      
-      // Atualizar ícones de ordenação
-      document.querySelectorAll('#dataTable th[data-sort]').forEach(th => {
-        const sortColumn = th.getAttribute('data-sort');
-        th.innerHTML = th.textContent;
-        if (currentSort.column === sortColumn) {
-          th.innerHTML += currentSort.direction === 'asc' ? ' ↑' : ' ↓';
-        }
-      });
     }
 
     function formatarMoeda(valor) {
-  if (!valor || isNaN(valor)) return '';
-  // Converte para número se for string (para casos de dados do localStorage)
-  const num = typeof valor === 'string' ? parseFloat(valor.replace('.', '').replace(',', '.')) : valor;
-  return num.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-}
+      if (!valor) return '';
+      valor = valor.replace(',', '.');
+      const num = parseFloat(valor);
+      if (isNaN(num)) return valor;
+      return num.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+    }
 
-    const filtros = ["tipoFilter", "ufFilter", "cidadeFilter", "bairroFilter", "modalidadeFilter", "sortFilter"];
+    const filtros = ["ufFilter", "cidadeFilter", "bairroFilter", "modalidadeFilter"];
     filtros.forEach(filtroId => {
       document.getElementById(filtroId).addEventListener("change", () => {
         const filtrosAtuais = {
-          tipo: document.getElementById("tipoFilter").value,
           uf: document.getElementById("ufFilter").value,
           cidade: document.getElementById("cidadeFilter").value,
           bairro: document.getElementById("bairroFilter").value,
-          modalidade: document.getElementById("modalidadeFilter").value,
-          sort: document.getElementById("sortFilter").value
+          modalidade: document.getElementById("modalidadeFilter").value
         };
 
-        let filtrado = originalData.filter(item => {
-          return (!filtrosAtuais.tipo || item.tipo === filtrosAtuais.tipo) &&
-                 (!filtrosAtuais.uf || item.uf === filtrosAtuais.uf) &&
+        const filtrado = originalData.filter(item => {
+          return (!filtrosAtuais.uf || item.uf === filtrosAtuais.uf) &&
                  (!filtrosAtuais.cidade || item.cidade === filtrosAtuais.cidade) &&
                  (!filtrosAtuais.bairro || item.bairro === filtrosAtuais.bairro) &&
                  (!filtrosAtuais.modalidade || item.modalidade === filtrosAtuais.modalidade);
         });
 
-        // Aplicar ordenação se selecionada
-        if (filtrosAtuais.sort) {
-          const [sortColumn, sortDirection] = filtrosAtuais.sort.split('-');
-          currentSort = { column: sortColumn, direction: sortDirection };
-        }
-
         renderTable(filtrado);
       });
     });
-
-    // Ordenação ao clicar no cabeçalho da tabela
-    document.querySelectorAll('#dataTable th[data-sort]').forEach(th => {
-      th.addEventListener('click', () => {
-        const column = th.getAttribute('data-sort');
-        
-        if (currentSort.column === column) {
-          currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-          currentSort.column = column;
-          currentSort.direction = 'asc';
-        }
-        
-        renderTable(getFilteredData());
-      });
-    });
-
-    function getFilteredData() {
-      const filtrosAtuais = {
-        tipo: document.getElementById("tipoFilter").value,
-        uf: document.getElementById("ufFilter").value,
-        cidade: document.getElementById("cidadeFilter").value,
-        bairro: document.getElementById("bairroFilter").value,
-        modalidade: document.getElementById("modalidadeFilter").value
-      };
-
-      return originalData.filter(item => {
-        return (!filtrosAtuais.tipo || item.tipo === filtrosAtuais.tipo) &&
-               (!filtrosAtuais.uf || item.uf === filtrosAtuais.uf) &&
-               (!filtrosAtuais.cidade || item.cidade === filtrosAtuais.cidade) &&
-               (!filtrosAtuais.bairro || item.bairro === filtrosAtuais.bairro) &&
-               (!filtrosAtuais.modalidade || item.modalidade === filtrosAtuais.modalidade);
-      });
-    }
 
     // Carregar dados do localStorage se existirem
     const savedData = localStorage.getItem("imoveis");
