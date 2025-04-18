@@ -3,152 +3,317 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leilões de Imóveis da Caixa e outros</title>
+  <title>Leilões de Imóveis - iMobi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
+    :root {
+      --primary-color: #003366;
+      --secondary-color: #ffcc00;
+      --accent-color: #00a0e1;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
     }
 
-    /* Menu Responsivo */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    /* Layout Moderno */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header Estilizado */
     .navbar {
-      background-color: #003366;
+      background-color: var(--primary-color);
       color: white;
-      padding: 15px 0;
+      padding: 1rem 0;
       position: sticky;
       top: 0;
       z-index: 1000;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 0 auto;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .nav-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
+      font-size: 1.8rem;
+      font-weight: 700;
       color: white;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo i {
+      color: var(--secondary-color);
     }
 
     .menu-toggle {
       display: none;
       cursor: pointer;
       font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: white;
     }
 
     .nav-links {
       display: flex;
       list-style: none;
-    }
-
-    .nav-links li {
-      margin-left: 20px;
+      gap: 1.5rem;
     }
 
     .nav-links a {
       color: white;
       text-decoration: none;
-      transition: color 0.3s;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 0.5rem 0;
+      position: relative;
     }
 
     .nav-links a:hover {
-      color: #ffcc00;
+      color: var(--secondary-color);
     }
 
-    /* Conteúdo principal */
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--secondary-color);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Conteúdo Principal */
     .main-content {
-      padding: 20px;
+      flex: 1;
+      padding: 2rem 0;
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
-      color: #003366;
+      margin-bottom: 2rem;
+      color: var(--primary-color);
+      font-size: 2.2rem;
+      position: relative;
+      padding-bottom: 0.5rem;
     }
 
-    input[type="file"] {
-      margin-bottom: 20px;
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background-color: var(--secondary-color);
+      border-radius: 2px;
+    }
+
+    /* Card de Informações */
+    .info-box {
+      background-color: white;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .info-box p {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-box i {
+      color: var(--accent-color);
+      font-size: 1.2rem;
+    }
+
+    #link-cef a {
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    #link-cef a:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+
+    /* Upload de Arquivo */
+    .file-upload {
+      position: relative;
+      margin-bottom: 2rem;
       width: 100%;
       max-width: 400px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .file-upload-label {
+      display: block;
+      padding: 1rem 1.5rem;
+      background-color: white;
+      border: 2px dashed var(--primary-color);
+      border-radius: var(--border-radius);
+      text-align: center;
+      font-weight: 500;
+      color: var(--primary-color);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .file-upload-label:hover {
+      background-color: rgba(0, 51, 102, 0.05);
+      border-color: var(--accent-color);
+    }
+
+    .file-upload-label i {
+      margin-right: 0.5rem;
+      color: var(--accent-color);
+    }
+
+    /* Filtros Modernos */
+    .filters-container {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
     }
 
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--primary-color);
+      font-size: 0.9rem;
     }
 
     select {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      min-width: 150px;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
       background-color: white;
+      font-size: 0.95rem;
+      color: var(--dark-color);
+      transition: var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0, 160, 225, 0.2);
+    }
+
+    /* Tabela Estilizada */
+    .table-container {
+      overflow-x: auto;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      min-width: 800px;
     }
 
     th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
+      padding: 1rem;
       text-align: left;
-    }
-
-    .info-box {
-      background-color: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    #link-cef {
-      text-align: center;
-      margin: 15px 0;
-    }
-
-    #link-cef a {
-      color: #003366;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    #link-cef a:hover {
-      text-decoration: underline;
+      border-bottom: 1px solid #eee;
     }
 
     th {
-      background-color: #003366;
+      background-color: var(--primary-color);
       color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
       cursor: pointer;
+      transition: var(--transition);
     }
 
     th:hover {
       background-color: #002244;
     }
 
-    .sort-icon {
-      margin-left: 5px;
+    th i {
+      margin-left: 0.5rem;
+      opacity: 0.7;
     }
 
     tr:nth-child(even) {
@@ -156,19 +321,143 @@
     }
 
     tr:hover {
-      background-color: #f1f1f1;
+      background-color: #f1f5f9;
     }
 
-    /* Rodapé */
-    footer {
-      background-color: #003366;
+    td a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    td a:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
+
+    .price-highlight {
+      color: var(--success-color);
+      font-weight: 600;
+    }
+
+    .discount-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background-color: var(--success-color);
       color: white;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Rodapé Moderno */
+    footer {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 2rem 0;
+      margin-top: auto;
+    }
+
+    .footer-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-logo i {
+      color: var(--secondary-color);
+    }
+
+    .footer-about p {
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .footer-links h3, .footer-contact h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .footer-links h3::after, .footer-contact h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background-color: var(--secondary-color);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      color: var(--secondary-color);
+    }
+
+    .footer-contact p {
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.8;
+    }
+
+    .footer-contact i {
+      width: 20px;
+      color: var(--secondary-color);
+    }
+
+    .footer-bottom {
       text-align: center;
-      padding: 20px 0;
-      margin-top: 30px;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      opacity: 0.7;
+      font-size: 0.9rem;
     }
 
     /* Responsividade */
+    @media (max-width: 992px) {
+      .filters {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     @media (max-width: 768px) {
       .menu-toggle {
         display: block;
@@ -177,12 +466,13 @@
       .nav-links {
         display: none;
         flex-direction: column;
-        width: 100%;
         position: absolute;
-        top: 60px;
+        top: 100%;
         left: 0;
-        background-color: #003366;
-        padding: 20px 0;
+        width: 100%;
+        background-color: var(--primary-color);
+        padding: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
       .nav-links.active {
@@ -190,84 +480,198 @@
       }
 
       .nav-links li {
-        margin: 10px 0;
-        text-align: center;
+        padding: 0.5rem 1.5rem;
       }
 
-      .filters {
-        flex-direction: column;
+      .nav-links a::after {
+        display: none;
       }
 
-      select {
-        width: 100%;
+      .filter-group {
+        min-width: 100%;
       }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 576px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .main-content, .nav-container, .footer-container {
+        width: 95%;
+      }
+
+      th, td {
+        padding: 0.75rem;
+      }
+    }
+
+    /* Animações e Efeitos */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .table-container {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* Loading State */
+    .loading {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
   </style>
 </head>
 <body>
-  <!-- Menu Responsivo -->
-  <nav class="navbar">
-    <div class="container nav-container">
-      <a href="#" class="logo">iMobi</a>
-      <div class="menu-toggle">☰</div>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="leiloeiros.html">Leiloeiros</a></li>
-        <li><a href="#contato">Contato</a></li>
-      </ul>
-    </div>
-  </nav>
+  <div class="app-container">
+    <!-- Menu Responsivo -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="#" class="logo">
+          <i class="fas fa-home"></i>
+          <span>iMobi</span>
+        </a>
+        <button class="menu-toggle" aria-label="Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+          <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="leiloeiros.html"><i class="fas fa-gavel"></i> Leiloeiros</a></li>
+          <li><a href="#contato"><i class="fas fa-envelope"></i> Contato</a></li>
+        </ul>
+      </div>
+    </nav>
 
-  <div class="main-content container">
-    <h1>Imóveis de Leilão</h1>
-    
-    <div class="info-box">
-      <p id="link-cef">1. Para baixar a lista de imóveis da caixa, acesse <a href="https://venda-imoveis.caixa.gov.br/sistema/download-lista.asp" target="_blank">este link</a></p>
-      <p id="link-cef">2. Para acessar + de 200 calculadoras e ferramentas online, acesse <a href="https://icontrolweb.com.br/" target="_blank">este link</a></p>
+    <div class="main-content">
+      <h1>Imóveis de Leilão</h1>
+      
+      <div class="info-box">
+        <p id="link-cef">
+          <i class="fas fa-download"></i>
+          Para baixar a lista de imóveis da caixa, acesse <a href="https://venda-imoveis.caixa.gov.br/sistema/download-lista.asp" target="_blank">este link</a>
+        </p>
+        <p id="link-cef">
+          <i class="fas fa-calculator"></i>
+          Para acessar + de 200 calculadoras e ferramentas online, acesse <a href="https://icontrolweb.com.br/" target="_blank">este link</a>
+        </p>
+      </div>
+
+      <div class="file-upload">
+        <input type="file" id="csvFile" accept=".csv">
+        <label for="csvFile" class="file-upload-label">
+          <i class="fas fa-file-import"></i> Carregar Arquivo CSV
+        </label>
+      </div>
+      
+      <div class="filters-container">
+        <div class="filters">
+          <div class="filter-group">
+            <label for="tipoFilter"><i class="fas fa-building"></i> Tipo</label>
+            <select id="tipoFilter"><option value="">Todos</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="ufFilter"><i class="fas fa-map-marker-alt"></i> UF</label>
+            <select id="ufFilter"><option value="">Todos</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="cidadeFilter"><i class="fas fa-city"></i> Cidade</label>
+            <select id="cidadeFilter"><option value="">Todas</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="bairroFilter"><i class="fas fa-map-pin"></i> Bairro</label>
+            <select id="bairroFilter"><option value="">Todos</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="modalidadeFilter"><i class="fas fa-tag"></i> Modalidade</label>
+            <select id="modalidadeFilter"><option value="">Todas</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="sortFilter"><i class="fas fa-sort"></i> Ordenar por</label>
+            <select id="sortFilter">
+              <option value="">Padrão</option>
+              <option value="preco-asc">Preço (menor para maior)</option>
+              <option value="preco-desc">Preço (maior para menor)</option>
+              <option value="desconto-asc">Desconto (menor para maior)</option>
+              <option value="desconto-desc">Desconto (maior para menor)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th data-sort="uf">UF <i class="fas fa-sort"></i></th>
+              <th data-sort="cidade">Cidade <i class="fas fa-sort"></i></th>
+              <th data-sort="bairro">Bairro <i class="fas fa-sort"></i></th>
+              <th>Endereço</th>
+              <th data-sort="preco">Preço <i class="fas fa-sort"></i></th>
+              <th data-sort="avaliacao">Avaliação <i class="fas fa-sort"></i></th>
+              <th data-sort="desconto">Desconto <i class="fas fa-sort"></i></th>
+              <th data-sort="tipo">Tipo <i class="fas fa-sort"></i></th>
+              <th data-sort="modalidade">Modalidade <i class="fas fa-sort"></i></th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
-    <input type="file" id="csvFile" accept=".csv">
-    
-    <div class="filters">
-      <select id="tipoFilter"><option value="">Tipo</option></select>
-      <select id="ufFilter"><option value="">UF</option></select>
-      <select id="cidadeFilter"><option value="">Cidade</option></select>
-      <select id="bairroFilter"><option value="">Bairro</option></select>
-      <select id="modalidadeFilter"><option value="">Modalidade</option></select>
-      <select id="sortFilter">
-        <option value="">Ordenar por</option>
-        <option value="preco-asc">Preço (menor para maior)</option>
-        <option value="preco-desc">Preço (maior para menor)</option>
-        <option value="desconto-asc">Desconto (menor para maior)</option>
-        <option value="desconto-desc">Desconto (maior para menor)</option>
-      </select>
-    </div>
-
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th data-sort="uf">UF</th>
-          <th data-sort="cidade">Cidade</th>
-          <th data-sort="bairro">Bairro</th>
-          <th>Endereço</th>
-          <th data-sort="preco">Preço</th>
-          <th data-sort="avaliacao">Valor Avaliação</th>
-          <th data-sort="desconto">Desconto</th>
-          <th data-sort="tipo">Tipo</th>
-          <th data-sort="modalidade">Modalidade</th>
-          <th>Link</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <footer id="contato">
+      <div class="footer-container">
+        <div class="footer-about">
+          <div class="footer-logo">
+            <i class="fas fa-home"></i>
+            <span>iMobi</span>
+          </div>
+          <p>Sistema especializado em leilões de imóveis da Caixa Econômica Federal e outros leiloeiros oficiais.</p>
+          <p>Encontre as melhores oportunidades do mercado imobiliário.</p>
+        </div>
+        <div class="footer-links">
+          <h3>Links Rápidos</h3>
+          <ul>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Home</a></li>
+            <li><a href="leiloeiros.html"><i class="fas fa-chevron-right"></i> Leiloeiros</a></li>
+            <li><a href="#contato"><i class="fas fa-chevron-right"></i> Contato</a></li>
+            <li><a href="https://venda-imoveis.caixa.gov.br" target="_blank"><i class="fas fa-chevron-right"></i> Site da Caixa</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h3>Contato</h3>
+          <p><i class="fas fa-envelope"></i> senadorx@gmail.com</p>
+          <p><i class="fas fa-phone-alt"></i> (11) 96131-2020</p>
+          <p><i class="fas fa-user"></i> Tiago</p>
+          <p><i class="fas fa-clock"></i> Seg-Sex: 9h às 18h</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 iMobi - Todos os direitos reservados</p>
+      </div>
+    </footer>
   </div>
-
-  <footer id="contato">
-    <div class="container">
-      <p>© 2025 Imóveis de Leilão - Todos os direitos reservados</p>
-      <p>Contato: senadorx@gmail.com ||  (11) 96131-2020 - Tiago</p>
-    </div>
-  </footer>
 
   <script>
     // Menu responsivo
@@ -275,13 +679,17 @@
       document.querySelector('.nav-links').classList.toggle('active');
     });
 
-    // Código original para manipulação do CSV
+    // Código para manipulação do CSV
     let originalData = [];
     let currentSort = { column: null, direction: 'asc' };
 
     document.getElementById('csvFile').addEventListener('change', function (e) {
       const file = e.target.files[0];
       const reader = new FileReader();
+
+      // Mostrar estado de carregamento
+      const tbody = document.querySelector("#dataTable tbody");
+      tbody.innerHTML = '<tr><td colspan="10" class="loading" style="height: 200px;"></td></tr>';
 
       reader.onload = function (event) {
         const lines = event.target.result.split('\n').slice(4); // pula cabeçalhos falsos
@@ -328,11 +736,11 @@
       const tipos = new Set();
 
       data.forEach(item => {
-        ufs.add(item.uf);
-        cidades.add(item.cidade);
-        bairros.add(item.bairro);
-        modalidades.add(item.modalidade);
-        tipos.add(item.tipo);
+        if (item.uf) ufs.add(item.uf);
+        if (item.cidade) cidades.add(item.cidade);
+        if (item.bairro) bairros.add(item.bairro);
+        if (item.modalidade) modalidades.add(item.modalidade);
+        if (item.tipo) tipos.add(item.tipo);
       });
 
       preencherSelect("ufFilter", ufs);
@@ -378,6 +786,11 @@
         });
       }
       
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 2rem;">Nenhum imóvel encontrado com os filtros selecionados</td></tr>';
+        return;
+      }
+      
       data.forEach(item => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -385,12 +798,12 @@
           <td>${item.cidade}</td>
           <td>${item.bairro}</td>
           <td>${item.endereco}</td>
-          <td>${formatarMoeda(item.preco)}</td>
+          <td class="price-highlight">${formatarMoeda(item.preco)}</td>
           <td>${formatarMoeda(item.avaliacao)}</td>
-          <td>${item.desconto ? item.desconto.toFixed(2).replace('.', ',') + '%' : ''}</td>
+          <td>${item.desconto ? '<span class="discount-badge">' + item.desconto.toFixed(2).replace('.', ',') + '%</span>' : ''}</td>
           <td>${item.tipo}</td>
           <td>${item.modalidade}</td>
-          <td><a href="${item.link}" target="_blank">Acessar</a></td>
+          <td><a href="${item.link}" target="_blank"><i class="fas fa-external-link-alt"></i> Ver</a></td>
         `;
         tbody.appendChild(row);
       });
@@ -398,24 +811,24 @@
       // Atualizar ícones de ordenação
       document.querySelectorAll('#dataTable th[data-sort]').forEach(th => {
         const sortColumn = th.getAttribute('data-sort');
-        th.innerHTML = th.textContent;
+        th.innerHTML = th.textContent + ' <i class="fas fa-sort"></i>';
         if (currentSort.column === sortColumn) {
-          th.innerHTML += currentSort.direction === 'asc' ? ' ↑' : ' ↓';
+          th.innerHTML = th.textContent + (currentSort.direction === 'asc' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>');
         }
       });
     }
 
     function formatarMoeda(valor) {
-  if (!valor || isNaN(valor)) return '';
-  // Converte para número se for string (para casos de dados do localStorage)
-  const num = typeof valor === 'string' ? parseFloat(valor.replace('.', '').replace(',', '.')) : valor;
-  return num.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-}
+      if (!valor || isNaN(valor)) return '';
+      // Converte para número se for string (para casos de dados do localStorage)
+      const num = typeof valor === 'string' ? parseFloat(valor.replace('.', '').replace(',', '.')) : valor;
+      return num.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
 
     const filtros = ["tipoFilter", "ufFilter", "cidadeFilter", "bairroFilter", "modalidadeFilter", "sortFilter"];
     filtros.forEach(filtroId => {
@@ -460,6 +873,7 @@
         }
         
         renderTable(getFilteredData());
+        document.getElementById("sortFilter").value = `${column}-${currentSort.direction}`;
       });
     });
 
